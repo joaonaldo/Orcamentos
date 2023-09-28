@@ -1,0 +1,227 @@
+﻿@model Orcamentos.Models.Orcamento
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Eliminar</h1>
+
+<h3>Tem a certeza que quer eliminar?</h3>
+<div>
+    <h4>Orçamento</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Id do Perfil
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.profileId)
+        </dd>
+        <dt class="col-sm-2">
+            Nome do Perfil
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Profile.Name)
+        </dd>
+        <dt class="col-sm-2">
+            Id do Tipo de Rendimento
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.revenueTypeId)
+        </dd>
+        <dt class="col-sm-2">
+            Tipo de Rendimento
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RevenueType.Nome)
+        </dd>
+        <dt class="col-sm-2">
+            Id da Unidade de Negocios
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.businessUnitId)
+        </dd>
+        <dt class="col-sm-2">
+            Unidade de Negocios
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.BusinessUnit.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Marca)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Marca)
+        </dd>
+        <dt class="col-sm-2">
+            Tipo de Unidade
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TipoUni)
+        </dd>
+        <dt class="col-sm-2">
+            Part Number
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Partnumb)
+        </dd>
+        <dt class="col-sm-2">
+            Modelo
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.modelo)
+        </dd>
+        <dt class="col-sm-2">
+            Numero de Serie
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.SerialNumb)
+        </dd>
+        <dt class="col-sm-2">
+            Nome do Produto
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProductName)
+        </dd>
+        <dt class="col-sm-2">
+            Fornecedor
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ExternalProvider)
+        </dd>
+        <dt class="col-sm-2">
+            Data de Entrega
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DelivaryDate)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Ativo)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Ativo)
+        <dt class="col-sm-2">
+            Unit Price
+        </dt>
+        <dd class="col-sm-10" id="unitPrice">
+                @Html.DisplayFor(model => model.UnitPrice)
+        </dd>
+        <dt class="col-sm-2">
+            Unit Cost
+        </dt>
+        <dd class="col-sm-10" id="unitCost">
+                @Html.DisplayFor(model => model.UnitCost)
+        </dd>
+            <dt class="col-sm-2">
+           Desconto tabela
+        </dt>
+        <dd class="col-sm-10" id="DescontoTabela">
+            @Html.DisplayFor(model => model.DescontoTabela)
+        </dd>
+        <dt class="col-sm-2">
+           Preço parcial
+        </dt>
+        <dd class="col-sm-10" id="PrecoParcial">
+            @Html.DisplayFor(model => model.PrecoParcial)
+        </dd>
+        <dt class="col-sm-2">
+            Custo Tabela
+        </dt>
+        <dd class="col-sm-10" id="CustoTabela">
+            @Html.DisplayFor(model => model.CustoTabela)
+        </dd>
+        <dt class="col-sm-2">
+            Custo Desconto 1
+        </dt>
+        <dd class="col-sm-10" id="CustoDesc1">
+            @Html.DisplayFor(model => model.CustoDesc1)
+        <dt class="col-sm-2">
+            Custo Desconto 2
+        </dt>
+        <dd class="col-sm-10" id="CustoDesc2">
+         @Html.DisplayFor(model => model.CustoDesc2)
+        <dt class="col-sm-2">
+            Custo Desconto 3
+        </dt>
+        <dd class="col-sm-10" id="CustoDesc3">
+        @Html.DisplayFor(model => model.CustoDesc3)
+        <dt class="col-sm-2">
+          Custo total
+        </dt>
+        <dd class="col-sm-10" id="TotalCost">
+     @Html.DisplayFor(model => model.TotalCost)
+        <dt class="col-sm-2">
+            Preço total
+        </dt>
+        <dd class="col-sm-10" id="TotalPrice">
+       @Html.DisplayFor(model => model.TotalPrice)
+        <dt class="col-sm-2">
+          Margem
+        </dt>
+        <dd class="col-sm-10" id="Margin">
+      @Html.DisplayFor(model => model. Margin)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Eliminar" class="btn btn-danger" /> |
+        <a asp-action="Index">Voltar para a lista</a>
+    </form>
+</div>
+<script>
+
+    let euro = new Intl.NumberFormat('pt-PT', {
+        style: 'currency',
+        currency: 'EUR',
+    });
+
+    var unitPrice = document.getElementById("unitPrice")
+
+    unitPrice.innerHTML = euro.format(@Html.Raw(Json.Serialize(Model.UnitPrice)));
+
+    var unitCost = document.getElementById("unitCost")
+
+    unitCost.innerHTML = euro.format(@Html.Raw(Json.Serialize(Model.UnitCost)));
+
+    var DescontoTabela = document.getElementById("DescontoTabela")
+
+    DescontoTabela.innerHTML = euro.format(@Html.Raw(Json.Serialize(Model.DescontoTabela)));
+
+    var PrecoParcial = document.getElementById("PrecoParcial")
+
+    PrecoParcial.innerHTML = euro.format(@Html.Raw(Json.Serialize(Model.PrecoParcial)));
+
+    var CustoTabela = document.getElementById("CustoTabela")
+
+    CustoTabela.innerHTML = euro.format(@Html.Raw(Json.Serialize(Model.CustoTabela)));
+
+    var CustoDesc1 = document.getElementById("CustoDesc1")
+
+    CustoDesc1.innerHTML = euro.format(@Html.Raw(Json.Serialize(Model.CustoDesc1)));
+
+    var CustoDesc2 = document.getElementById("CustoDesc2")
+
+    CustoDesc2.innerHTML = euro.format(@Html.Raw(Json.Serialize(Model.CustoDesc2)));
+
+    var CustoDesc3 = document.getElementById("CustoDesc3")
+
+    CustoDesc3.innerHTML = euro.format(@Html.Raw(Json.Serialize(Model.CustoDesc3)));
+
+    var TotalCost = document.getElementById("TotalCost")
+
+    TotalCost.innerHTML = euro.format(@Html.Raw(Json.Serialize(Model.TotalCost)));
+
+    varTotalPrice = document.getElementById("TotalPrice")
+
+    TotalPrice.innerHTML = euro.format(@Html.Raw(Json.Serialize(Model.TotalPrice)));
+
+    var Margin = document.getElementById("Margin")
+
+    Margin.innerHTML = euro.format(@Html.Raw(Json.Serialize(Model.Margin)));
+
+
+
+
+
+</script>

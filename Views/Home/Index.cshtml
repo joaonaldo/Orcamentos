@@ -1,0 +1,157 @@
+﻿@model Orcamentos.Models.ViewModels.GraphicsViewModel
+@{
+    ViewData["Title"] = "Home Page";
+
+   
+
+}
+
+@{
+    var datar = Html.Raw(Json.Serialize(Model.listaBu.Take(7).Select(o => o.Name)));
+}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
+
+<style>
+    .card-gradient {
+        background-image: linear-gradient(to bottom, #41154A, #704070);
+        color: white;
+    }
+
+        .card-gradient h5 {
+            font-size: 1.6rem;
+        }
+
+        .card-gradient p {
+            font-size: 1.2rem;
+        }
+</style>
+<div class="container-fluid">
+    <div class="center-img" >
+        <img style="
+        display: block;
+        margin: 0 auto;
+        text-align: center;
+    }" src="~/img/logo_brvantic_349x175.2e16d0ba.fill-279x140.png" alt="Descrição da imagem">
+    </div>
+</div>
+
+
+   @if (ViewBag.TotalOrcamentos == null || ViewBag.MediaPrecos == null || ViewBag.MediaCusto == null)
+        {
+            <div class="alert alert-warning" role="alert">
+                Não há orçamentos ativos para exibir.
+            </div>
+        }
+        else
+        {
+    <div class="row mt-4">
+        <div class="col-sm-4">
+            <div class="card card-gradient">
+                <div class="card-body">
+
+                    <p class="card-text">Total de orçamentos</p>
+                    <h5 class="card-title">@ViewBag.TotalOrcamentos</h5>
+                  
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-4">
+            <div class="card card-gradient">
+                <div class="card-body">
+                    <p class="card-text">Média dos Orcamentos <p>
+                    <h5 class="card-title" id="mediaPrecos">@string.Format(new System.Globalization.CultureInfo("pt-PT"), "{0:C}", ViewBag.MediaPrecos)</h5> 
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-4">
+            <div class="card card-gradient">
+                <div class="card-body">
+                  
+                    <p class="card-text">Média do Custo total</p>
+                    
+                    <h5 class="card-title">@string.Format(new System.Globalization.CultureInfo("pt-PT"), "{0:C}", ViewBag.MediaCusto)</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+    <div class="row mt-4">
+        <div class="col">
+            <canvas id="myChart" class="w-100"></canvas>
+        </div>
+        <div class="col">
+            <canvas id="myChart2" class="w-100"></canvas>
+        </div>
+    </div>
+<script>
+
+    var datar = JSON.parse('@Html.Raw(datar)');
+        var Ocorrencias = @Html.Raw(Json.Serialize(Model.ocorrencias.Take(7)
+          ));
+
+    console.log(Ocorrencias);
+    console.log(datar)
+
+        const data = {
+            labels: datar,
+            datasets: [{
+            label:'Número de Orcamentos',
+                data: Ocorrencias,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 205, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(201, 203, 207, 0.2)'
+                ],
+                borderColor: [
+                    'rgb(255, 99, 132)',
+                    'rgb(255, 159, 64)',
+                    'rgb(255, 205, 86)',
+                    'rgb(75, 192, 192)',
+                    'rgb(54, 162, 235)',
+                    'rgb(153, 102, 255)',
+                    'rgb(201, 203, 207)'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        const myChart = new Chart("myChart", {
+            type: 'bar',
+            data: data,
+      
+        });
+
+     @*   const data2 = {
+            labels: [
+                'Red',
+                'Blue',
+                'Yellow'
+            ],
+            datasets: [{
+                label: datar,
+                data: [300, 50, 100],
+                backgroundColor: [
+                    'rgb(255, 99, 132)',
+                    'rgb(54, 162, 235)',
+                    'rgb(255, 205, 86)'
+                ],
+                hoverOffset: 4
+            }]
+        };*@
+        @*// </block:setup>
+
+        // <block:config:0>*@
+        const myChart2 = new Chart("myChart2", {
+            type: 'doughnut',
+            data: data,
+        });
+</script>
+
+
+

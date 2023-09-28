@@ -1,0 +1,985 @@
+﻿@model IEnumerable<Orcamentos.Models.Orcamento>
+
+@{
+	ViewData["Title"] = "Orçamentos";
+	//var options = Model.Select(o => o.Profile.Name).Distinct().ToList();
+}
+
+<h1>Menu</h1>
+<h3>Orçamentos</h3>
+
+<div class="mb-3">
+	<a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus-lg btn-icon mr-2"></i></a>
+
+	<button class="btn btn-success" onclick="changeTable()" id="changeTableButton">Mostrar Excel</button>
+</div>
+
+
+<table class="table" id="orcamentosTable">
+	<thead>
+		<tr>
+			<th>
+				Proposta
+			</th>
+			<th>
+				Perfil
+			</th>
+			<th>
+				Sub Família
+			</th>
+			<th>
+				Unidade de Negocio
+			</th>
+			<th>
+				Marca
+			</th>
+			<th>
+				Tipo de Unidade
+			</th>
+			<th>
+				Part Number
+			</th>
+			<th>
+				Modelo
+			</th>
+			<th>
+				Numero de serie
+			</th>
+			<th>
+				Nome de produto
+			</th>
+			<th>
+				Quantidade
+			</th>
+			<th>
+				Custo total
+			</th>
+			<th>
+				Preço total
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@{
+			int i = 0;
+		}
+		@foreach (var item in Model)
+		{
+					<tr>
+						<td>
+					@Html.DisplayFor(modelItem => item.OrcamentoNome.Nome)
+						</td>
+						<td>
+					@Html.DisplayFor(modelItem => item.Profile.Name)
+						</td>
+						<td>
+					@Html.DisplayFor(modelItem => item.RevenueType.Nome)
+						</td>
+						<td>
+					@Html.DisplayFor(modelItem => item.BusinessUnit.Name)
+						</td>
+						<td>
+					@Html.DisplayFor(modelItem => item.Marca)
+						</td>
+						<td>
+					@Html.DisplayFor(modelItem => item.TipoUni)
+						</td>
+						<td>
+					@Html.DisplayFor(modelItem => item.Partnumb)
+						</td>
+						<td>
+					@Html.DisplayFor(modelItem => item.modelo)
+						</td>
+						<td>
+					@Html.DisplayFor(modelItem => item.SerialNumb)
+						</td>
+						<td>
+					@Html.DisplayFor(modelItem => item.ProductName)
+						</td>
+						<td>
+					@Html.DisplayFor(modelItem => item.Quantidade)
+						</td>
+						<td id="@("TotalCost"+i)" class="totalCost">
+					@Html.DisplayFor(modelItem => item.TotalCost)
+						</td>
+						<td id="@("TotalPrice"+i)">
+					@Html.DisplayFor(modelItem => item.TotalPrice)
+						</td>
+						<td>
+							 <div class="btn-group" role="group" >
+								<div>
+									<a asp-action="Details" asp-route-id="@item.Id" class="btn btn-success rounded-0 rounded-start">
+										<i class="bi bi-file-text-fill btn-icon mr-2"></i>
+									</a>
+								</div>
+								<div>
+									<a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary rounded-0">
+										<i class="bi bi-pencil-square btn-icon mr-2"></i>
+									</a>
+								</div>
+								<div>
+									<button type="button" class="btn btn-danger rounded-0 rounded-end" id="@("EliminarButton"+i)" data-id="@item.Id" onclick="showModalDelete(this.id)">
+										<i class="bi bi-trash3-fill btn-icon mr-2"></i>
+									</button>
+								</div>
+							</div>
+						</td>
+					</tr>
+			i++;
+		}
+	</tbody>
+</table>
+
+<div class="modal fade" id="eliminarModal" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title text-break" id="eliminarModalNome">Eliminar Orçamento Nº</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body text-break" >
+				Tem a certeza que pretende eliminar o Orçamento Nº<span id="eliminarModalDesc"></span> ? <h6>Esta ação não pode ser desfeita</h6>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+				<form id="eliminarModalForm" method="POST">
+					<button type="submit" class="btn btn-danger">Eliminar</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="eliminarModalExcel" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title text-break" id="eliminarModalNomeExcel">Eliminar Orçamento Nº</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body text-break">
+				Tem a certeza que pretende eliminar o Orçamento Nº<span id="eliminarModalDescExcel"></span> ? <h6>Esta ação não pode ser desfeita</h6>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+				<button type="submit" class="btn btn-danger" data-id="" id="eliminarModalButtonExcel">Eliminar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="excelTable" class="d-none">
+	<div class="mb-3" id="excelOrcamentos"></div>
+
+	<button class="btn btn-success" id="save-button">Guardar</button>
+	<button class="btn btn-success" id="addRowButton" >Adicionar linha</button>
+	<button class="btn btn-success" id="export-file" >Exportar Excel</button>
+	<button class="btn btn-success" id="btnPDF" >Exportar PDF</button>
+
+	<div class="d-none" id="excelOrcamentos2"></div>
+</div>
+
+
+@*<div>@Html.DropDownList("profilesList")</div>*@
+
+<script>
+
+
+	function showModalDelete(id){
+
+		var id_value = document.getElementById(id);
+		const idOrcamento = id_value.getAttribute("data-id");
+
+		document.getElementById('eliminarModalForm').setAttribute("action", "/Orcamentos/Delete/"+idOrcamento); 
+        document.getElementById('eliminarModalNome').innerHTML = "Eliminar Orçamento Nº" + idOrcamento;
+        document.getElementById('eliminarModalDesc').innerHTML = idOrcamento;
+
+		$("#eliminarModal").modal("show");
+	}
+
+	function showModalDeleteExcel(id) {
+
+		var id_value = document.getElementById(id);
+		const idOrcamento = id_value.getAttribute("data-id");
+
+		document.getElementById('eliminarModalNomeExcel').innerHTML = "Eliminar Orçamento Nº" + idOrcamento;
+		document.getElementById('eliminarModalDescExcel').innerHTML = idOrcamento;
+
+		document.getElementById('eliminarModalButtonExcel').setAttribute("data-id", idOrcamento);
+
+		$("#eliminarModalExcel").modal("show");
+	}
+
+	let euro = new Intl.NumberFormat('pt-PT', {
+		style: 'currency',
+		currency: 'EUR',
+	});
+
+	let percentagem = new Intl.NumberFormat('default', {
+		style: 'percent',
+		minimumFractionDigits: 1,
+		maximumFractionDigits: 1,
+	});
+
+	var buttonTable = document.getElementById("changeTableButton")
+
+	function changeTable() {
+
+		var table = document.getElementById("orcamentosTable");
+		var excel = document.getElementById("excelTable")
+
+		if (excel.classList.contains('d-none')) {
+			table.classList.add('d-none')
+			excel.classList.remove('d-none')
+			buttonTable.innerHTML = "Mostrar Tabela"
+		}
+		else {
+			table.classList.remove('d-none')
+			excel.classList.add('d-none')
+			buttonTable.innerHTML = "Mostrar Excel"
+		}
+
+	}
+
+	document.addEventListener('DOMContentLoaded', function () {
+
+		var data = @Html.Raw(Json.Serialize(Model
+			.Select(o => new {
+				o.Id,
+				OrcamentoNomeId = o.orcamentoNomeId,
+				OrcamentoName = o.OrcamentoNome.Nome,
+				ProfileId = o.profileId,
+				ProfileName = o.Profile.Name,
+				RevenueTypeId = o.revenueTypeId,
+				RevenueTypeName = o.RevenueType.Nome,
+				BusinessUnitId = o.businessUnitId,
+				BusinessUnitName = o.BusinessUnit.Name,
+				o.Marca,
+				o.TipoUni,
+				o.Partnumb,
+				o.modelo,
+				o.SerialNumb,
+				o.ProductName,
+				o.ExternalProvider,
+				o.DelivaryDate,
+				o.Quantidade,
+				o.UnitPrice,
+				o.UnitCost,
+				o.DescontoTabela,
+				o.PrecoParcial,
+				o.CustoTabela,
+				o.CustoDesc1,
+				o.CustoDesc2,
+				o.CustoDesc3,
+				o.TotalCost,
+				o.TotalPrice,
+				o.Margin,
+				o.MG,
+				o.Ativo
+			})));
+
+		var colHeaders = [
+			'ID',
+			'Proposta ID',
+			'Proposta',
+			'Perfil ID',
+			'Perfil',
+			'Sub Família ID',
+			'Sub Família',
+			'Unidade de Negócio ID',
+			'Unidade de Negócio',
+			'Marca',
+			'Tipo de Unidade',
+			'Part Number',
+			'Modelo',
+			'Número de Série',
+			'Nome do Produto',
+			'Fornecedor',
+			'Data de Entrega',
+			'Quantidade',
+			'Preço de Unidade Diário',
+			'Custo de Unidade Diário',
+			'Desconto Tabela',
+			'Preço Parcial',
+			'Custo Tabela',
+			'Custo Desconto 1',
+			'Custo Desconto 2',
+			'Custo Desconto 3',
+			'Custo Total',
+			'Preço Total',
+			'Margem',
+			'MG',
+			'Ativo',
+			'Eliminar'
+			];
+
+			var actionRenderer = function (instance, td, row, col, prop, value, cellProperties) {
+				var id = instance.getDataAtRowProp(row, 'id');
+				var $button = $('<button type="button" class="btn btn-sm btn-danger rounded-2" style="font-size: 0.8em;" id="EliminarButtonExcel'+id+'" data-id="'+id+'" onclick="showModalDeleteExcel(this.id)"></button>');
+				$button.html("Eliminar")
+				$(td).css('text-align', 'center').empty().append($button);
+			};
+
+		var container = document.getElementById('excelOrcamentos');
+
+		var mList = @Html.Raw(Json.Serialize(ViewBag.profilesList));
+		var result = mList.map((item) => item.text)
+		var mList2 = @Html.Raw(Json.Serialize(ViewBag.revenueTypesList));
+		var result2 = mList2.map((item) => item.text)
+		var mList3 = @Html.Raw(Json.Serialize(ViewBag.businessUnitsList));
+		var result3 = mList3.map((item) => item.text)
+		var mList4 = @Html.Raw(Json.Serialize(ViewBag.orcamentosNomesList));
+		var result4 = mList4.map((item) => item.text)
+
+		const formatEUR = {
+			pattern: '0,0.00 $',
+			culture: 'pt-PT',
+		};
+
+		var hot = new Handsontable(container, {
+			data: data,
+			colHeaders: colHeaders,
+			columns: [
+				{ data: 'id', readOnly: true },
+				{ data: 'orcamentoNomeId', readOnly: true },
+				{ data: 'orcamentoName', type: 'dropdown', source: result4 },
+				{ data: 'profileId', readOnly: true }, //o id do profile deve coincidir com o profile selecionado
+				{ data: 'profileName', type: 'dropdown', source: result },
+				{ data: 'revenueTypeId', readOnly: true },
+				{ data: 'revenueTypeName', type: 'dropdown', source: result2 },
+				{ data: 'businessUnitId', readOnly: true },
+				{ data: 'businessUnitName', type: 'dropdown', source: result3 },
+				{ data: 'marca', type: 'text' },
+				{ data: 'tipoUni', type: 'text' },
+				{ data: 'partnumb', type: 'numeric' },
+				{ data: 'modelo', type: 'text' },
+				{ data: 'serialNumb', type: 'numeric' },
+				{ data: 'productName', type: 'text' },
+				{ data: 'externalProvider', type: 'text' },
+				{ data: 'delivaryDate', type: 'date', dateFormat: 'DD/MM/YYYY', correctFormat: true },
+				{ data: 'quantidade', type: 'numeric' },
+				{ data: 'unitPrice', type: 'numeric', numericFormat: formatEUR },
+				{ data: 'unitCost', type: 'numeric', numericFormat: formatEUR },
+				{ data: 'descontoTabela', type: 'numeric', numericFormat: formatEUR },
+				{ data: 'precoParcial', type: 'numeric', numericFormat: formatEUR },
+				{ data: 'custoTabela', type: 'numeric', numericFormat: formatEUR },
+				{ data: 'custoDesc1', type: 'numeric', numericFormat: formatEUR },
+				{ data: 'custoDesc2', type: 'numeric', numericFormat: formatEUR },
+				{ data: 'custoDesc3', type: 'numeric', numericFormat: formatEUR },
+				{ data: 'totalCost', type: 'numeric', numericFormat: formatEUR, readOnly: true },
+				{ data: 'totalPrice', type: 'numeric', numericFormat: formatEUR, readOnly: true },
+				{ data: 'margin', type: 'numeric', numericFormat: formatEUR, readOnly: true },
+				{ data: 'mg', type: 'numeric', numericFormat: { pattern: { output: "percent", mantissa: 1 } }, readOnly: true },
+				{ data: 'ativo', type: 'checkbox', readOnly: true },
+				{ data: 'eliminar', renderer: actionRenderer, readOnly: true }
+			],
+
+			afterChange: function (changes, source) {
+				if (source === 'edit') {
+					var unitCostCol = hot.getDataAtCol(19);
+					var unitPriceCol = hot.getDataAtCol(18);
+					var quantidadeCol = hot.getDataAtCol(17);
+					var descTabelaCol = hot.getDataAtCol(20);
+					var totalCostCol = hot.getDataAtCol(26);
+					var precoParcialCol = hot.getDataAtCol(21);
+					var custoTabelaCol = hot.getDataAtCol(22);
+					var custoDesc1Col = hot.getDataAtCol(23);
+					var custoDesc2Col = hot.getDataAtCol(24);
+					var custoDesc3Col = hot.getDataAtCol(25);
+
+					changes.forEach(function (change) {
+						var row = change[0];
+						var prop = change[1];
+						var newValue = change[3];
+
+						if (prop === 'profileName') {
+							var profile = mList.find(function (p) { return p.text === newValue; });
+							hot.setDataAtCell(row, hot.propToCol('profileId'), profile.value);
+						}
+						if (prop === 'orcamentoName') {
+							var profile2 = mList4.find(function (p) { return p.text === newValue; });
+							hot.setDataAtCell(row, hot.propToCol('orcamentoNomeId'), profile2.value);
+						}
+						if (prop === 'revenueTypeName') {
+							var profile3 = mList2.find(function (p) { return p.text === newValue; });
+							hot.setDataAtCell(row, hot.propToCol('revenueTypeId'), profile3.value);
+						}
+						if (prop === 'businessUnitName') {
+							var profile4 = mList3.find(function (p) { return p.text === newValue; });
+							hot.setDataAtCell(row, hot.propToCol('businessUnitId'), profile4.value);
+						}
+						if (prop === 'unitCost' || prop === 'quantidade' || prop === 'unitPrice' || prop === 'descontoTabela'|| prop === 'precoParcial' || prop === 'custoTabela' || prop === 'custoDesc1' || prop === 'custoDesc2'|| prop === 'custoDesc3') {
+							var row = change[0];
+							var unitCost = unitCostCol[row];
+							var custoTabela = custoTabelaCol[row];
+							var qnt = quantidadeCol[row];
+							var totalCost = (unitCost * qnt) + custoTabela;
+							var unitPrice = unitPriceCol[row];
+							var descTabela = descTabelaCol[row];
+							var precoParcial = precoParcialCol[row];
+							var custoDescs = custoDesc1Col[row] + custoDesc2Col[row] + custoDesc3Col[row]
+							var totalPrice = ((unitPrice - descTabela) + precoParcial) - custoDescs;
+							var margin = totalPrice - totalCost
+							var mg = margin / totalPrice;
+							hot.setDataAtCell(row, hot.propToCol('totalCost'), totalCost);
+							hot.setDataAtCell(row, hot.propToCol('totalPrice'), totalPrice);
+							hot.setDataAtCell(row, hot.propToCol('margin'), margin);
+							hot.setDataAtCell(row, hot.propToCol('mg'), mg);
+						}
+					});
+				}
+			},
+			language: 'pt-BR',
+			hiddenColumns: {
+				columns: [30]
+			},
+			rowHeaders: true,
+			filters: true,
+			dropdownMenu: ['filter_by_condition', 'filter_action_bar'],
+			columnSorting: true,
+			height: '300px',
+			licenseKey: 'non-commercial-and-evaluation' // for non-commercial use only
+		});
+
+		var button1 = document.getElementById('export-file');
+
+		
+		var pdfButton = document.getElementById('btnPDF');
+
+
+		//pdf
+		pdfButton.addEventListener('click', function() {
+
+			var data = hot.getData();
+			window.jsPDF = window.jspdf.jsPDF;
+
+			for (var i = 0; i < data.length; i++) {
+
+				data[i][18] = euro.format(data[i][18]);
+				data[i][19] = euro.format(data[i][19]);
+				data[i][20] = euro.format(data[i][20]);
+				data[i][21] = euro.format(data[i][21]);
+				data[i][22] = euro.format(data[i][22]);
+				data[i][23] = euro.format(data[i][23]);
+				data[i][24] = euro.format(data[i][24]);
+				data[i][25] = euro.format(data[i][25]);
+				data[i][26] = euro.format(data[i][26]);
+				data[i][27] = euro.format(data[i][27]);
+				data[i][28] = euro.format(data[i][28]);
+				data[i][29] = percentagem.format(data[i][29]);
+			}
+
+			var colHeaders2 = [
+			'ID',
+			'Proposta ID',
+			'Proposta',
+			'Perfil ID',
+			'Perfil',
+			'Sub Família ID',
+			'Sub Família',
+			'Unidade de Negócio ID',
+			'Unidade de Negócio',
+			'Marca',
+			'Tipo de Unidade',
+			'Part Number',
+			'Modelo',
+			'Número de Série',
+			'Nome do Produto',
+			'Fornecedor',
+            'Data de Entrega',
+			'Quantidade',
+			'Preço de Unidade Diário',
+			'Custo de Unidade Diário',
+			'Desconto Tabela',
+			'Preço Parcial',
+			'Custo Tabela',
+			'Custo Desconto 1',
+			'Custo Desconto 2',
+			'Custo Desconto 3',
+			'Custo Total',
+			'Preço Total',
+			'Margem',
+			'MG'];
+			var startY = 60;
+			var doc = new jsPDF('landscape', 'pt', 'a1');
+
+			var currentDate = new Date();
+			var dateString = currentDate.getDate() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getFullYear();
+
+			doc.text('Tabela de Orçamentos - ' + dateString, 33, 33);
+			doc.autoTable({
+				margin: {left: 4, right: 4},
+				startY: startY,
+				head: [colHeaders2],
+				body: data,
+				styles: {
+					cellPadding: 7.5,
+					fontSize: 8
+
+				},
+				columnStyles: {
+					0: { columnWidth: 23 },
+					1: { columnWidth: 57 },
+					3: { columnWidth: 35 },
+					5: { columnWidth: 65 },
+					7: { columnWidth: 55 },
+				    20: { columnWidth: 70 },
+				    21: { columnWidth: 70 },
+					22: { columnWidth: 80 },
+					23: { columnWidth: 70 },
+					24: { columnWidth: 70 },
+				    25: { columnWidth: 70 },
+					26: { columnWidth: 80 },
+					27: { columnWidth: 70 },
+					28: { columnWidth: 70 },
+					29: { columnWidth: 50 }
+				}
+
+				
+			});
+
+			var dateString = currentDate.getDate() + '-' + (currentDate.getMonth() + 1) + '-' + currentDate.getFullYear();
+
+			doc.save('Tabela_Orçamentos_'+dateString+'.pdf');
+		});
+
+		function setEuro(){
+		var totalCosts = hot.getDataAtCol(26);
+		var totalPrices = hot.getDataAtCol(27);
+		var countOrcamentos = document.getElementsByClassName('totalCost').length;
+
+		for (let i = 0; i < countOrcamentos; i++) {
+
+			var totalCost = document.getElementById("TotalCost" + i);
+			totalCost.innerHTML = euro.format(totalCosts[i]);
+
+			var totalPrice = document.getElementById("TotalPrice" + i);
+			totalPrice.innerHTML = euro.format(totalPrices[i]);
+	
+		}
+	}
+
+	setEuro();
+
+		const save = document.querySelector('#save-button');
+
+		var tableData = JSON.stringify(hot.getSourceData());
+
+		//console.log(tableData);
+
+		$("#save-button").click(function () {
+			hot.validateCells((valid) => {
+				if (valid) {
+
+					$.ajax({
+						url: '/Orcamentos/UpdateOrcamentos',
+						data: JSON.stringify(hot.getSourceData()),
+						dataType: 'json',
+						contentType: "application/json",
+						type: 'POST',
+						success: function (result) {
+							getTable();
+							//location.reload()
+						},
+						error: function (xhr, status, error) {
+							alert("Failure: " + error);
+						}
+					});
+				}
+				else {
+					alert("Erro, verifique se tem alguma célula inválida.");
+				}
+			})
+
+		});
+
+		function getTable() {
+
+			$.ajax({
+				url: '/Orcamentos/GetTableOrcamentos',
+				dataType: 'json',
+				contentType: "application/json",
+				type: 'GET',
+				success: function (data) {
+					var i = 0;
+					var tableBody = $('#orcamentosTable tbody');
+					tableBody.empty(); // clear existing rows
+					$.each(data, function (index, item) {
+
+						var orcamentoName = item.orcamentoNome ? item.orcamentoNome.nome : '';
+						var profileName = item.profile ? item.profile.name : '';
+						var revenueTypeName = item.revenueType ? item.revenueType.nome : '';
+						var businessUnitName = item.businessUnit ? item.businessUnit.name : '';
+
+						var row = '<tr>' +
+							'<td>' + orcamentoName + '</td>' +
+							'<td>' + profileName + '</td>' +
+							'<td>' + revenueTypeName + '</td>' +
+							'<td>' + businessUnitName + '</td>' +
+							'<td>' + item.marca + '</td>' +
+							'<td>' + item.tipoUni + '</td>' +
+							'<td>' + item.partnumb + '</td>' +
+							'<td>' + item.modelo + '</td>' +
+							'<td>' + item.serialNumb + '</td>' +
+							'<td>' + item.productName + '</td>' +
+							'<td>' + item.quantidade + '</td>' +
+							'<td id="TotalCost'+i+'" class="totalCost">' + item.totalCost + '</td>' +
+							'<td id="TotalPrice'+i+'">' + item.totalPrice + '</td>' +
+							'<td>' +
+							'<div class="btn-group" role="group" >' +
+							'<div>' +
+							'<a href="/orcamentos/details/' + item.id + '" class="btn btn-success rounded-0 rounded-start">' +
+							'<i class="bi bi-file-text-fill btn-icon mr-2"></i>' +
+							'</a>' +
+							'</div>' +
+							'<div>' +
+							'<a href="/orcamentos/edit/' + item.id + '" class="btn btn-primary rounded-0">' +
+							'<i class="bi bi-pencil-square btn-icon mr-2"></i>' +
+							'</a>' +
+							'</div>' +
+							'<div>' +
+							'<button type="button" class="btn btn-danger rounded-0 rounded-end" id="EliminarButton'+i+'" data-id="' + item.id + '" onclick="showModalDelete(this.id)">' +
+							'<i class="bi bi-trash3-fill btn-icon mr-2"></i>' +
+							'</button>' +
+							'</div>' +
+							'</div>' +
+						    '</td>' +
+							'</tr>';
+						tableBody.append(row);
+						i += 1;
+					});
+					setEuro();
+				},
+				error: function (xhr, status, error) {
+					alert("Failure: " + error);
+				}
+			});
+
+		}
+
+		function deleteOnExcel(){
+
+		var id_value = document.getElementById("eliminarModalButtonExcel");
+		const idOrcamento = id_value.getAttribute("data-id");
+
+		$("#eliminarModalExcel").modal("hide");
+
+		$.ajax({
+				type: "POST",
+				url: "/Orcamentos/deleteOnExcel",
+				data: idOrcamento,
+				contentType: "application/json; charset=utf-8;",
+				dataType: "json",
+				success: function (data) {
+
+					hot.loadData(data);
+					getTable();
+				},
+				error: function (xhr, status, error) {
+					console.log(error);
+				}
+			});
+		}
+
+		var buttonDelete = document.getElementById("eliminarModalButtonExcel")
+		buttonDelete.addEventListener("click", deleteOnExcel)
+
+		function addNewRow() {
+			hot.validateCells((valid) => {
+            	if (valid) {
+                        
+                	$.ajax({
+                    	url: '/Orcamentos/UpdateOrcamentos',
+                    	data: JSON.stringify(hot.getSourceData()),
+                    	dataType: 'json',
+                    	contentType: "application/json",
+                    	type: 'POST',
+                    	success: function (result) {
+                        	var date = moment();
+                            
+                            			var currentDate = date.format('DD/MM/YYYY');
+                            
+                            			var novaLinha = {
+                            				orcamentoNomeId: 1,
+                            				profileId: 1,
+                            				revenueTypeId: 1,
+                            				businessUnitId: 1,
+                            				Marca: "Não definido",
+                            				TipoUni: "Não definido",
+                            				Partnumb: 0,
+                            				modelo: "Não definido",
+                            				SerialNumb: 0,
+                            				ProductName: "Não definido",
+                            				DelivaryDate: currentDate,
+                            				ExternalProvider: "Não definido",
+                            				Quantidade: 0 ,
+                            				UnitPrice: 0,
+                            				UnitCost: 0,
+                            				DescontoTabela: 0,
+                            				PrecoParcial: 0,
+                            				CustoTabela: 0,
+                            				CustoDesc1: 0,
+                            				CustoDesc2: 0,
+                            				CustoDesc3: 0,
+                            				TotalCost: 0,
+                            				TotalPrice: 0,
+                            				Margin: 0,
+                            				MG: 0.00,
+                            				Ativo: true
+                            			};
+                            			
+                            			
+                            
+                            
+                            			$.ajax({
+                            				type: "POST",
+                            				url: "/Orcamentos/AddNewRow",
+                            				data: novaLinha,
+                            				dataType: "json",
+                            				success: function (dataModel) {
+                            					hot.loadData(dataModel);
+                            					getTable();
+                            				},
+                            				error: function (xhr, status, error) {
+                            					console.log(error);
+                            				}
+                            			});
+							
+                        						
+                        },
+                    	error: function (xhr, status, error) {
+                        	alert("Failure: " + error);
+                    	}
+                	});
+            	}
+            	else {
+                	alert("Erro, verifique se tem alguma célula inválida.");
+            	}
+        	})
+			
+
+
+
+
+
+		}
+
+		 var buttonNewRow = document.getElementById("addRowButton")
+		 buttonNewRow.addEventListener("click", addNewRow)
+
+		//csv
+		button1.addEventListener('click', function () {
+
+			var data = hot.getData();
+
+			for (var i = 0; i < data.length; i++) {
+				data[i][16] = euro.format(data[i][16]);
+				data[i][17] = euro.format(data[i][17]);
+				data[i][18] = euro.format(data[i][18]);
+				data[i][19] = euro.format(data[i][19]);
+				data[i][20] = euro.format(data[i][20]);
+				data[i][21] = euro.format(data[i][21]);
+				data[i][22] = euro.format(data[i][22]);
+				data[i][23] = euro.format(data[i][23]);
+				data[i][24] = euro.format(data[i][24]);
+				data[i][25] = euro.format(data[i][25]);
+				data[i][26] = euro.format(data[i][26]);
+				data[i][27] = percentagem.format(data[i][27]);
+			}
+
+
+
+			var data2 = @Html.Raw(Json.Serialize(Model
+				.Select(o => new {
+
+					ProposalNumber = o.OrcamentoNome.ProposalNumber,
+					Sequencia= o.Id*10,
+					o.Partnumb,
+					o.ProductName,
+					o.Quantidade,
+					o.DescontoTabela,
+					o.Marca,
+					o.TotalPrice,
+					o.TotalCost,
+					o.DelivaryDate,
+					SubFamilia = o.RevenueType.Nome,
+					o.ExternalProvider,
+
+				})));
+
+			$.ajax({
+				type: "GET",
+				url: "/Orcamentos/getOrcamentos",
+				dataType: "json",
+				success: function (linhas2) {
+					var colHeaders2 = [
+						'Proposta',
+						'Sequencia',
+						'Part Number',
+						'Nome do Produto',
+						'Quantidade',
+						'Desconto',
+						'Marca',
+						'Preço',
+						'Custo',
+						'Produto Composto',
+						'Produto Componente',
+						'Prazo de Entrega',
+						'SubFamilia',
+						'Serviços',
+						'Fornecedor',
+					];
+
+
+
+
+
+					//var data3 = hot2.getData();
+					var seq = 10;
+
+					for (var i = 0; i < data2.length; i++) {
+						data2[i][1] = (data[i][1]) + "0";
+						data2[i][7] = euro.format(data[i][7]);
+						data2[i][8] = euro.format(data[i][8]);
+						data2[i][5] = percentagem.format(data[i][5]);
+						data2[i][9] = "";
+						data2[i][10] = "";
+						seq += 10;
+					}
+
+
+
+
+					var hot2 = new Handsontable(document.getElementById('excelOrcamentos2'), {
+						data: linhas2,
+						colHeaders: colHeaders2,
+						columns: [
+							{ data: 'proposalNumber', type: 'text' },
+							{ data: 'sequencia', type: 'numeric' },
+							{ data: 'partnumb', type: 'numeric' },
+							{ data: 'productName', type: 'text' },
+							{ data: 'quantidade', type: 'numeric' },
+							{ data: 'descontoTabela', type: 'numeric', numericFormat: formatEUR },
+							{ data: 'marca', type: 'text' },
+							{ data: 'totalPrice', type: 'numeric', numericFormat: formatEUR, readOnly: true },
+							{ data: 'totalCost', type: 'numeric', numericFormat: formatEUR, readOnly: true },
+							{ data: 'produtoComposto', type: 'text' },
+							{ data: 'produtoComponente', type: 'text' },
+							{ data: 'delivaryDate', type: 'date', dateFormat: 'DD/MM/YYYY', correctFormat: true },
+							{ data: 'subFamilia', type: 'text' },
+							{ data: 'servicos', type: 'text' },
+							{ data: 'externalProvider', type: 'text' },
+						],
+						licenseKey: 'non-commercial-and-evaluation' // for non-commercial use only
+
+					});
+					
+					var data3 = hot2.getData();
+                    
+                                        for (var i = 0; i < data3.length; i++) {
+                                        data3[i][5] = euro.format(data3[i][5]);
+                                        data3[i][7] = euro.format(data3[i][7]);
+                                        data3[i][8] = euro.format(data3[i][8]);
+                                        }
+					
+					var currentDate = new Date();
+                    var dateString = currentDate.getDate() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getFullYear();
+					
+					var wb = XLSX.utils.book_new();
+                    
+                    var ws = XLSX.utils.json_to_sheet(data3);
+					XLSX.utils.sheet_add_aoa(ws, [colHeaders2], { origin: 'A1' });			
+										
+                    XLSX.utils.book_append_sheet(wb, ws, 'Folha 1');
+                    
+                    				
+                    var wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+                    
+                    function s2ab(s) {
+                    	var buf = new ArrayBuffer(s.length);
+                    	var view = new Uint8Array(buf);
+                    	for (var i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xff;
+                    		return buf;
+                    	}
+                    
+                    	var blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
+                    
+                    	var downloadUrl = URL.createObjectURL(blob);
+                    	var a = document.createElement('a');
+                    	a.href = downloadUrl;
+                    	a.download = 'Tabela_Orçamentos_'+dateString+'.xlsx';
+                    	document.body.appendChild(a);
+                    	a.click();
+                    	setTimeout(function () {
+                    		document.body.removeChild(a);
+                    		window.URL.revokeObjectURL(downloadUrl);
+                    	}, 0);
+
+					/*var exportPlugin1 = hot2.getPlugin('exportFile');
+
+					exportPlugin1.downloadFile('csv', {
+						bom: false,
+						columnDelimiter: ',',
+						columnHeaders: true,
+						exportHiddenColumns: false,
+						exportHiddenRows: true,
+						fileExtension: 'csv',
+						filename: 'Tabela_Orçamentos_[YYYY]-[MM]-[DD]',
+						mimeType: 'text/csv',
+						rowDelimiter: '\r\n',
+						rowHeaders: false
+					});*/
+				},
+				error: function (xhr, status, error) {
+					console.log(error);
+				}
+			});
+
+			
+
+	 
+			
+		});
+
+		//save.addEventListener('click', () => {
+		//    // save all cell's data
+		//    fetch('/Orcamentos/UpdateOrcamentos', {
+		//        method: 'POST',
+		//        mode: 'no-cors',
+		//        headers: {
+		//            'Content-Type': 'application/json; charset=utf-8'
+		//        },
+		//        contentType: 'application/json; charset=utf-8',
+		//        //dataType: 'json',
+		//        //data: JSON.stringify(hot.getSourceData()),
+		//        body: JSON.stringify({ data: tableData })
+		//        //body: JSON.stringify({ data: tableData }),
+
+		//    })
+		//        .then(response => {
+		//            exampleConsole.innerText = 'Data saved';
+		//        });
+		//});
+
+		//saveButton.addEventListener('click', function () {
+		//    var updatedData = hot.getSourceData();
+		//    $.ajax({
+		//        type: 'POST',
+		//        url: '/Orcamentos/UpdateOrcamentos',
+		//        data: JSON.stringify(updatedData),
+		//        contentType: 'application/json; charset=utf-8',
+		//        dataType: 'json',
+		//        success: function () {
+		//            alert('Dados salvos com sucesso!');
+		//        },
+		//        error: function (error) {
+		//            alert('Ocorreu um erro ao salvar os dados.' + error);
+		//        }
+		//    });
+		//});
+	});
+
+
+
+</script>

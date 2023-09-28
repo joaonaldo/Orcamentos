@@ -1,0 +1,670 @@
+﻿@model Orcamentos.Models.Orcamento
+
+@{
+	ViewData["Title"] = "Editar";
+}
+
+<h1>Editar</h1>
+
+<h4>Orçamento</h4>
+<hr />
+<div>
+		<form asp-action="Edit" class="needs-validation">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="row">
+				<div class="col-4">
+					<input type="hidden" asp-for="Id" />
+					<div class="form-group mb-2">
+						<label class="control-label">Proposta</label>
+						<div class="input-group">
+							<select class="form-select" asp-for="orcamentoNomeId" required
+									asp-items="@(new SelectList(ViewBag.orcamentosNomesList,"Value","Text"))">
+								<option selected disabled value="">Selecione uma opção</option>
+							</select>
+
+						</div>
+					</div>
+					<div class="form-group mb-2">
+						<label class="control-label">Perfil</label>
+						<div class="input-group">
+							<select class="form-select" asp-for="profileId" required
+									asp-items="@(new SelectList(ViewBag.profilesList,"Value","Text"))">
+								<option selected disabled value="">Selecione uma opção</option>
+							</select>
+
+						</div>
+
+						<span asp-validation-for="profileId" class="text-danger"></span>
+					</div>
+					<div class="form-group mb-2">
+						<label class="control-label">Tipo de Rendimento</label>
+						<div class="input-group">
+							<select class="form-select" asp-for="revenueTypeId" required
+									asp-items="@(new SelectList(ViewBag.revenueTypesList,"Value","Text"))">
+								<option selected disabled value="">Selecione uma opção</option>
+							</select>
+
+						</div>
+
+						<span asp-validation-for="revenueTypeId" class="text-danger"></span>
+					</div>
+					<div class="form-group mb-2">
+						<label class="control-label">Unidade de Negocio</label>
+						<div class="input-group">
+							<select class="form-select" asp-for="businessUnitId" required
+									asp-items="@(new SelectList(ViewBag.businessUnitsList,"Value","Text"))">
+								<option selected disabled value="">Selecione uma opção</option>
+							</select>
+
+						</div>
+
+						<span asp-validation-for="businessUnitId" class="text-danger"></span>
+					</div>
+					<div class="form-group mb-2">
+						<label asp-for="Marca" class="control-label"></label>
+						<input asp-for="Marca" class="form-control" required/>
+					</div>
+					<div class="form-group mb-2">
+						<label asp-for="TipoUni" class="control-label">Tipo de Unidade</label>
+						<input asp-for="TipoUni" class="form-control" required/>
+					</div>
+					<div class="form-group mb-2">
+						<label asp-for="Partnumb" class="control-label">Part Number</label>
+						<input asp-for="Partnumb" class="form-control" required/>
+					</div>
+					<div class="form-group mb-2">
+						<label asp-for="modelo" class="control-label">Modelo</label>
+						<input asp-for="modelo" class="form-control" required/>
+					</div>
+					<div class="form-group mb-2">
+						<label asp-for="SerialNumb" class="control-label">Numero de Serie</label>
+						<input asp-for="SerialNumb" class="form-control" required/>
+					</div>
+					<div class="form-group mb-2">
+						<label asp-for="ProductName" class="control-label">Nome do Produto</label>
+						<input asp-for="ProductName" class="form-control" required/>
+					</div>
+                    <div class="form-group mb-2">
+						<label asp-for="ExternalProvider" class="control-label">Fornecedor</label>
+						<input asp-for="ExternalProvider" class="form-control" required/>
+					</div>
+                <div class="form-group mb-2">
+                    <label asp-for="DelivaryDate" class="control-label">Data de entrega</label>
+                    <input type="date" id="deliveryDateDisplay" class="form-control" required />
+                    <input asp-for="DelivaryDate" id="deliveryDate" class="form-control d-none" readonly />
+                </div>
+				<div class="form-group mb-2">
+					<label asp-for="Quantidade" class="control-label">Quantidade</label>
+					<input asp-for="Quantidade" class="form-control" id="qnt" required/>
+				</div>
+                </div>
+            <div class="col-4">
+                <div class="mb-2">
+                    <label class="control-label">Preço de Unidade Diário</label>
+                        <div class="input-group ">
+                            <input class="form-control" id="unitPriceDisplay" required />
+                            <div class="input-group-append">
+                                <span class="input-group-text">€</span>
+                                </div>
+                            </div>
+                    <input asp-for="UnitPrice" class="form-control d-none" id="unitPrice" readonly />
+                    </div>
+                <div class="mb-2">
+                    <label class="control-label">Custo de Unidade Diário</label>
+                    <div class="input-group">
+                        <input class="form-control" id="unitCostDisplay" required/>
+                        <div class="input-group-append">
+                            <span class="input-group-text">€</span>
+                        </div>
+                    </div>
+                    <input asp-for="UnitCost" class="form-control d-none" id="unitCost" readonly/>
+                </div>
+
+                <div class="mb-2">
+                    <label class="control-label">Desconto da Tabela</label>
+                    <div class="input-group ">
+                        <input class="form-control" id="descTabelaDisplay" required/>
+                        <div class="input-group-append">
+                            <span class="input-group-text">€</span>
+                        </div>
+                    </div>
+                    <input asp-for="DescontoTabela" class="form-control d-none" id="descTabela" readonly/>
+                </div>
+                <div class="mb-2">
+                    <label class="control-label">Preço Parcial</label>
+                    <div class="input-group ">
+                        <input class="form-control" id="precoParcialDisplay" required/>
+                        <div class="input-group-append">
+                            <span class="input-group-text">€</span>
+                        </div>
+                    </div>
+                    <input asp-for="PrecoParcial" class="form-control d-none" id="precoParcial" readonly/>
+                </div>
+                <div class="mb-2">
+                    <label class="control-label">Custo da Tabela</label>
+                    <div class="input-group">
+                        <input class="form-control" id="custoTabelaDisplay" required/>
+                        <div class="input-group-append">
+                            <span class="input-group-text">€</span>
+                        </div>
+                    </div>
+                    <input asp-for="CustoTabela" class="form-control d-none" id="custoTabela" readonly/>
+                </div>
+                <div class="mb-2">
+                    <label class="control-label">Custo do Desconto 1</label>
+                    <div class="input-group">
+                        <input class="form-control" id="custoDesc1Display" required/>
+                        <div class="input-group-append">
+                            <span class="input-group-text">€</span>
+                        </div>
+                    </div>
+                    <input asp-for="CustoDesc1" class="form-control d-none" id="custoDesc1" readonly/>
+                </div>
+                <div class="mb-2">
+                    <label class="control-label">Custo do Desconto 2</label>
+                    <div class="input-group">
+                        <input class="form-control" id="custoDesc2Display" required/>
+                        <div class="input-group-append">
+                            <span class="input-group-text">€</span>
+                        </div>
+                    </div>
+                    <input asp-for="CustoDesc2" class="form-control d-none" id="custoDesc2" readonly/>
+                </div>
+                <div class="mb-2">
+                    <label class="control-label">Custo do Desconto 3</label>
+                    <div class="input-group">
+                        <input class="form-control" id="custoDesc3Display" required/>
+                        <div class="input-group-append">
+                            <span class="input-group-text">€</span>
+                        </div>
+                    </div>
+                    <input asp-for="CustoDesc3" class="form-control d-none" id="custoDesc3" readonly/>
+                </div>
+                <div class="mb-2">
+                    <label class="control-label">Custo Total</label>
+                    <div class="input-group">
+                        <input class="form-control" id="custoTotalDisplay" readonly/>
+                        <div class="input-group-append">
+                            <span class="input-group-text">€</span>
+                        </div>
+                    </div>
+                    <input asp-for="TotalCost" class="form-control d-none" id="custoTotal" readonly/>
+                </div>
+                <div class="mb-2">
+                    <label class="control-label">Preço Total</label>
+                    <div class="input-group">
+                        <input class="form-control" id="precoTotalDisplay" readonly/>
+                        <div class="input-group-append">
+                            <span class="input-group-text">€</span>
+                        </div>
+                    </div>
+                    <input asp-for="TotalPrice" class="form-control d-none" id="precoTotal" readonly/>
+                </div>
+                <div class="mb-2">
+                    <label class="control-label">Margem</label>
+                    <div class="input-group">
+                        <input class="form-control" id="margemDisplay" readonly/>
+                        <div class="input-group-append">
+                            <span class="input-group-text">€</span>
+                        </div>
+                    </div>
+                    <input asp-for="Margin" class="form-control d-none" id="margem" readonly/>
+                </div>
+                <div class="mb-2">
+                    <label class="control-label">MG</label>
+                    <div class="input-group">
+                        <input class="form-control" id="MGdisplay" readonly/>
+                        <div class="input-group-append">
+                            <span class="input-group-text">%</span>
+                        </div>
+                    </div>
+                    <input asp-for="MG" class="form-control d-none" id="MG" readonly/>
+                </div>
+                <div class="form-group form-check d-none">
+                    <label class="form-check-label">
+                        <input class="form-check-input" asp-for="Ativo" checked/> @Html.DisplayNameFor(model => model.Ativo)
+                    </label>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Guardar" class="btn btn-primary"/>
+                </div>
+            </div>
+			</div>
+		</form>
+
+	<div>
+		<a class="btn btn-primary" asp-action="Index">Voltar para a lista</a>
+	</div>
+</div>
+
+<script>
+
+    let numberWithComma = new Intl.NumberFormat('de-DE', {
+        useGrouping: false,
+
+    });
+
+    let percentagem = new Intl.NumberFormat('default', {
+		style: 'percent',
+		minimumFractionDigits: 1,
+		maximumFractionDigits: 1,
+	});
+
+    var delivery = document.getElementById("deliveryDateDisplay");
+    var deliveryHidden = document.getElementById("deliveryDate");
+
+    var dates = deliveryHidden.value.split('/');
+
+    var dataCorrect = dates[2] + '-' + dates[1] + '-' + dates[0]
+
+    delivery.value = dataCorrect;
+    
+    delivery.addEventListener("change", (event) => {
+        
+        var dates = delivery.value.split('-');
+        
+        var dataCorrect = dates[2] + '/' + dates[1] + '/' + dates[0]
+        
+        deliveryHidden.value = dataCorrect;
+    });
+
+    var decimalSeparator = "@ViewBag.decimalSeparator";
+
+    var qnt = document.getElementById("qnt");
+
+    var unitPrice = document.getElementById("unitPriceDisplay");
+    var unitPriceHidden = document.getElementById("unitPrice");
+
+    var unitCost = document.getElementById("unitCostDisplay");
+    var unitCostHidden = document.getElementById("unitCost");
+
+    var descTabela = document.getElementById("descTabelaDisplay");
+    var descTabelaHidden = document.getElementById("descTabela");
+
+    var precoParcial = document.getElementById("precoParcialDisplay");
+    var precoParcialHidden = document.getElementById("precoParcial");
+
+    var custoTabela = document.getElementById("custoTabelaDisplay");
+    var custoTabelaHidden = document.getElementById("custoTabela");
+
+    var custoDesc1 = document.getElementById("custoDesc1Display");
+    var custoDesc1Hidden = document.getElementById("custoDesc1");
+
+    var custoDesc2 = document.getElementById("custoDesc2Display");
+    var custoDesc2Hidden = document.getElementById("custoDesc2");
+
+    var custoDesc3 = document.getElementById("custoDesc3Display");
+    var custoDesc3Hidden = document.getElementById("custoDesc3");
+
+    var custoTotal = document.getElementById("custoTotalDisplay");
+    var custoTotalHidden = document.getElementById("custoTotal");
+
+    var precoTotal = document.getElementById("precoTotalDisplay");
+    var precoTotalHidden = document.getElementById("precoTotal");
+
+    var margem = document.getElementById("margemDisplay");
+    var margemHidden = document.getElementById("margem");
+
+    var MG = document.getElementById("MGdisplay");
+    var MGhidden = document.getElementById("MG");
+
+    if(decimalSeparator == ","){
+        unitPrice.value = unitPriceHidden.value.replace(",", ".");
+    }
+    else{
+        unitPrice.value = unitPriceHidden.value;
+    }
+
+    if(decimalSeparator == ","){
+        unitCost.value = unitCostHidden.value.replace(",", ".");
+    }
+    else{
+        unitCost.value = unitCostHidden.value;
+    }
+
+    if(decimalSeparator == ","){
+        descTabela.value = descTabelaHidden.value.replace(",", ".");
+    }
+    else{
+        descTabela.value = descTabelaHidden.value;
+    }
+
+    if(decimalSeparator == ","){
+        precoParcial.value = precoParcialHidden.value.replace(",", ".");
+    }
+    else{
+        precoParcial.value = precoParcialHidden.value;
+    }
+
+    if(decimalSeparator == ","){
+        custoTabela.value = custoTabelaHidden.value.replace(",", ".");
+    }
+    else{
+        custoTabela.value = custoTabelaHidden.value;
+    }
+
+    if(decimalSeparator == ","){
+        custoDesc1.value = custoDesc1Hidden.value.replace(",", ".");
+    }
+    else{
+        custoDesc1.value = custoDesc1Hidden.value;
+    }
+
+    if(decimalSeparator == ","){
+        custoDesc2.value = custoDesc2Hidden.value.replace(",", ".");
+    }
+    else{
+        custoDesc2.value = custoDesc2Hidden.value;
+    }
+
+    if(decimalSeparator == ","){
+        custoDesc3.value = custoDesc3Hidden.value.replace(",", ".");
+    }
+    else{
+        custoDesc3.value = custoDesc3Hidden.value;
+    }
+
+    if(decimalSeparator == ","){
+        custoTotal.value = custoTotalHidden.value.replace(",", ".");
+    }
+    else{
+        custoTotal.value = custoTotalHidden.value;
+    }
+
+    if(decimalSeparator == ","){
+        precoTotal.value = precoTotalHidden.value.replace(",", ".");
+    }
+    else{
+        precoTotal.value = precoTotalHidden.value;
+    }
+
+    if(decimalSeparator == ","){
+        margem.value = margemHidden.value.replace(",", ".");
+    }
+    else{
+        margem.value = margemHidden.value;
+    }
+
+    if(decimalSeparator == ","){
+        var mgValue = margem.value / precoTotal.value
+        MGhidden.value = numberWithComma.format(mgValue);
+        MG.value = mgValue * 100;
+    }
+    else{
+        var mgValue = margem.value / precoTotal.value
+        MGhidden.value = mgValue;
+        MG.value = mgValue * 100;
+    }
+
+    var checkMG = MG.value;
+
+    if(isNaN(checkMG) == true){
+        MGhidden.value = 0;
+        MG.value = 0;
+    }
+    
+
+    qnt.addEventListener("keyup", cost);
+    unitCost.addEventListener("keyup", cost);
+    unitPrice.addEventListener("keyup", price);
+    custoTabela.addEventListener("keyup", cost);
+    custoDesc1.addEventListener("keyup", price);
+    custoDesc2.addEventListener("keyup", price);
+    custoDesc3.addEventListener("keyup", price);
+    descTabela.addEventListener("keyup", price);
+    precoParcial.addEventListener("keyup", price);
+
+    unitCost.addEventListener("keyup", (event) => {
+        if(decimalSeparator == ","){
+            unitCostHidden.value = numberWithComma.format(unitCost.value);
+        }
+        else{
+            unitCostHidden.value = unitCost.value;
+        }
+    });
+
+    unitPrice.addEventListener("keyup", (event) => {
+        if (decimalSeparator == ",") {
+            unitPriceHidden.value = numberWithComma.format(unitPrice.value);
+        }
+        else {
+            unitPriceHidden.value = unitPrice.value;
+        }    
+    });
+
+    custoTabela.addEventListener("keyup", (event) => {
+        
+        if (decimalSeparator == ",") {
+            custoTabelaHidden.value = numberWithComma.format(custoTabela.value);
+        }
+        else {
+            custoTabelaHidden.value = custoTabela.value;
+        }
+    });
+
+    custoDesc1.addEventListener("keyup", (event) => {
+        if (decimalSeparator == ",") {
+            custoDesc1Hidden.value = numberWithComma.format(custoDesc1.value);
+        }
+        else {
+            custoDesc1Hidden.value = custoDesc1.value;
+        }
+        
+    });
+
+    custoDesc2.addEventListener("keyup", (event) => {
+        if (decimalSeparator == ",") {
+            custoDesc2Hidden.value = numberWithComma.format(custoDesc2.value);
+        }
+        else {
+            custoDesc2Hidden.value = custoDesc2.value;
+        }
+        
+    });
+
+    custoDesc3.addEventListener("keyup", (event) => {
+        if (decimalSeparator == ",") {
+            custoDesc3Hidden.value = numberWithComma.format(custoDesc3.value);
+        }
+        else {
+            custoDesc3Hidden.value = custoDesc3.value;
+        }
+        
+    });
+
+    descTabela.addEventListener("keyup", (event) => {
+        if (decimalSeparator == ",") {
+            descTabelaHidden.value = numberWithComma.format(descTabela.value);
+        }
+        else {
+            descTabelaHidden.value = descTabela.value;
+        }
+        
+    });
+
+    precoParcial.addEventListener("keyup", (event) => {
+        if (decimalSeparator == ",") {
+            precoParcialHidden.value = numberWithComma.format(precoParcial.value);
+        }
+        else {
+            precoParcialHidden.value = precoParcial.value;
+        }
+        
+    });
+
+    function cost(){
+        if(unitCost.value != ""){
+            var q = qnt.value;
+            var cuTabela = custoTabela.value;
+
+            if(q == ""){
+                q = 1;
+            }
+
+            if (cuTabela == "") {
+                cuTabela = 0;
+            }
+
+            var custoTotalValue = (parseFloat(q) * unitCost.value) + parseFloat(cuTabela)
+
+            custoTotal.value = custoTotalValue;
+
+            if (decimalSeparator == ",") {
+                custoTotalHidden.value = numberWithComma.format(custoTotalValue);
+            }
+            else {
+                custoTotalHidden.value = custoTotalValue;
+            }
+            
+        }
+
+        if (custoTotal.value != "" && precoTotal.value != "") {
+
+            margem.value = precoTotal.value - custoTotal.value;
+            if (decimalSeparator == ",") {
+                margemHidden.value = numberWithComma.format(margem.value);
+            }
+            else {
+                margemHidden.value = margem.value;
+            }
+            
+            var mgValue = margem.value / precoTotal.value
+            
+            if (decimalSeparator == ",") {
+                MGhidden.value = numberWithComma.format(mgValue);
+            }
+            else {
+                MGhidden.value = mgValue;
+            }
+
+            
+            MG.value = mgValue * 100;
+           
+            
+        }
+
+        var checkMG = MG.value;
+
+        if(isNaN(checkMG) == true){
+            MGhidden.value = 0;
+            MG.value = 0;
+        }
+    }
+
+    function price(){
+        if(unitPrice.value != ""){
+            var desc1 = custoDesc1.value;
+            var desc2 = custoDesc2.value;
+            var desc3 = custoDesc3.value;
+            var precoP = precoParcial.value;
+            var descT = descTabela.value;
+
+            if(desc1 == ""){
+                desc1 = 0;
+            }
+
+            if(desc2 == ""){
+                desc2 = 0;
+            }
+
+            if(desc3 == ""){
+                desc3 = 0;
+            }
+
+            if(precoP == ""){
+                precoP = 0;
+            }
+
+            if(descT == ""){
+                descT = 0;
+            }
+
+            var descs = parseFloat(desc1) + parseFloat(desc2) + parseFloat(desc3);
+
+            var precoTotalValue = ((unitPrice.value - parseFloat(descT)) + parseFloat(precoP)) - descs;
+
+            precoTotal.value = precoTotalValue;
+
+            
+            if (decimalSeparator == ",") {
+                precoTotalHidden.value = numberWithComma.format(precoTotalValue);
+            }
+            else {
+                precoTotalHidden.value = precoTotalValue;
+            }
+
+            if (custoTotal.value != "" && precoTotal.value != "") {
+                margem.value = precoTotal.value - custoTotal.value;
+                if (decimalSeparator == ",") {
+                    margemHidden.value = numberWithComma.format(margem.value);
+                }
+                else {
+                    margemHidden.value = margem.value;
+                }
+
+                var mgValue = margem.value / precoTotal.value
+
+                if (decimalSeparator == ",") {
+                    MGhidden.value = numberWithComma.format(mgValue);
+                }
+                else {
+                    MGhidden.value = mgValue;
+                }
+
+                
+                    MG.value = mgValue * 100;
+                
+            }
+        }
+
+        var checkMG = MG.value;
+
+        if(isNaN(checkMG) == true){
+            MGhidden.value = 0;
+            MG.value = 0;
+        }
+    }
+
+    function restrictInput(e) {
+        const regex = /^\d*(\.\d{0,2})?$/;
+        if (!regex.test(e.target.value)) {
+            e.target.value = e.target.value.slice(0, -1);
+        }
+    }
+
+    unitCost.addEventListener("input", restrictInput);
+    unitPrice.addEventListener("input", restrictInput);
+    custoTabela.addEventListener("input", restrictInput);
+    custoDesc1.addEventListener('input', restrictInput);
+    custoDesc2.addEventListener("input", restrictInput);
+    custoDesc3.addEventListener("input", restrictInput);
+    descTabela.addEventListener("input", restrictInput);
+    precoParcial.addEventListener("input", restrictInput);
+
+    (function() {
+  'use strict';
+  window.addEventListener('load', function() {
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.getElementsByClassName('needs-validation');
+    // Loop over them and prevent submission
+    var validation = Array.prototype.filter.call(forms, function(form) {
+      form.addEventListener('submit', function(event) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  }, false);
+})();
+
+    
+
+</script>
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+	}
